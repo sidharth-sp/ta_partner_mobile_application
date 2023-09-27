@@ -1,0 +1,8 @@
+C:\Work\apache-maven-3.8.3\bin\mvn clean
+
+C:\Work\apache-maven-3.8.3\bin\mvn package -e -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags '@cta100'"
+
+C:\Work\apache-maven-3.8.3\bin\mvn install exec:java -e -Dtest.appiumPort="4723" -Dtest.UDID="1603201121002MR" -Dtest.Device="device3" -Dtest.Category="demo" -Dtest.Platform="android" -Dtest.Environment="test" -Dacceptance.test.parallel.count="1" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags '@eu15'"
+
+
+appium --address 127.0.0.1 --port 4723
