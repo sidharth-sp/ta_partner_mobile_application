@@ -135,11 +135,21 @@ public class PartnerWebPortalService extends DriverContext {
     }
 
     public void addAccessPoint(String serialNumber){
-        String token = PropertyUtility.getDataProperties("token");
+        String token = "";
         String partnerId = PropertyUtility.getDataProperties("main.partner.id");
         String orgId = PropertyUtility.getDataProperties("main.org.id");
         String siteId = PropertyUtility.getDataProperties("main.site.id");
         String networkId = PropertyUtility.getDataProperties("main.network.id");
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("token") !=null){
+                token = System.getProperty("token");
+            }else{
+                token = PropertyUtility.getDataProperties("token");
+            }
+        }else{
+            token = PropertyUtility.getDataProperties("token");
+        }
 
         String jsonString = "{\"name\":\"AppAuto4\",\"installationMethod\":\"new_install\"," +
                 "\"configuration\":\"entry_rex\",\"siteId\":"+siteId+"," +
