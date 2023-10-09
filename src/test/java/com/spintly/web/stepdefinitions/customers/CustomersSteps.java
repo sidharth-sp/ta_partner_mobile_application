@@ -218,6 +218,10 @@ public class CustomersSteps extends DriverContext {
             }
         }
 
+        while(!actions.isElementPresent(customerPage.detachedDeviceSearch(true))){
+            actions.backButtonPhone();
+        }
+
         actions.clearAndSend(customerPage.detachedDeviceSearch(false), accessPointName);
         actions.click(customerPage.accessPointDelete(accessPointName, false));
         actions.click(customerPage.accessPointConfirmDelete(false));

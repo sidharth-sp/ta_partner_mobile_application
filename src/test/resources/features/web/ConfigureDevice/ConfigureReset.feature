@@ -25,9 +25,6 @@ Feature: Login
     And I click on "Access Points tab" button
     And I scroll and select the access point to be reset
     And I click on the reset device button
-    And I click on "Phone - Back" button
-    And I click on "Phone - Back" button
-    And I click on "Phone - Back" button
     And I search the access point to be deleted and delete it
 #    And I click on "Phone - Back" button
 #    And I click on "Detached Devices Tab" button
