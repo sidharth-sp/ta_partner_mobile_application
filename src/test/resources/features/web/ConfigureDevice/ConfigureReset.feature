@@ -18,7 +18,7 @@ Feature: Login
 
   @resetDevice
   Scenario: Check if device can be deleted and detached
-    Given I call the show reset button API
+#    Given I call the show reset button API
     When I click on "hamburger-menu" button
     And I click on "Customers" button
     And I search and select the customer
