@@ -12,6 +12,7 @@ import com.spintly.base.utilities.RandomDataGenerator;
 import com.spintly.web.pages.customers.CustomerPage;
 import com.spintly.web.pages.home.Home;
 import com.spintly.web.pages.login.LoginPage;
+import com.spintly.web.pages.saams.LoginPageSaams;
 import com.spintly.web.support.WebDriverActions;
 import com.spintly.web.utilityfunctions.GeneralUtility;
 import cucumber.api.java.en.And;
@@ -34,14 +35,16 @@ import java.util.List;
 
 public class LoginSteps extends DriverBase {
     LoginPage loginPage = new LoginPage();
+    LoginPageSaams loginPageSaams = new LoginPageSaams();
     Home home = new Home();
+    GeneralUtility generalUtility = new GeneralUtility();
 
     CustomerPage customerPage = new CustomerPage();
     WebDriverActions actions = new WebDriverActions();
 
     @Given("I enter the username")
     public void i_enter_the_username() throws Throwable {
-            String device = System.getProperty("test.Device");
+            String device = "device3";
             switch (device){
                 case "device1":
                     break;
@@ -57,9 +60,9 @@ public class LoginSteps extends DriverBase {
         String phone = PropertyUtility.getDataProperties("admin.username");
 
         if(System.getProperty("Parallel").equalsIgnoreCase("true")){
-            if(System.getProperty("username") != null){
+            if(System.getProperty("loginUsername") != null){
                 System.out.println("Inside Login Username");
-                phone = System.getProperty("username");
+                phone = System.getProperty("loginUsername");
             }
         }
         actions.click(loginPage.phoneInput(false));
@@ -68,14 +71,48 @@ public class LoginSteps extends DriverBase {
         actions.adbSendText(phone,true);
     }
 
+    @Given("I login to SAAMS")
+    public void i_login_to_saams() throws Throwable {
+        String device = System.getProperty("test.Device");
+        WebDriverActions action = new WebDriverActions();
+        action.toggleDeviceWifi("enable");
+        action.setBluetooth("enable");
+        PropertyUtility.setLoginData("device", device);
+        device = device.replace("'", "").replace("'", "");
+
+        String username = PropertyUtility.getDataProperties("admin.username");
+        String password = PropertyUtility.getDataProperties("admin.password");
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("usernameSaams") != null){
+                username = System.getProperty("usernameSaams");
+            }
+
+            if(System.getProperty("passwordSaams") != null){
+                password = System.getProperty("passwordSaams");
+            }
+        }
+
+        System.out.println("Logged In As : Name :" + PropertyUtility.getDataProperties("admin.name") + "; Phone : " + username + "; Password : " + password);
+
+        action.clearAndSendInit(loginPageSaams.phoneInput(false), username);
+        action.clickInit(loginPageSaams.nextButton(false));
+        action.clearAndSendInit(loginPageSaams.passwordInput(false), password);
+        action.clickInit(loginPageSaams.loginButton(false));
+
+        Thread.sleep(2000);
+
+        generalUtility.allowBLESaams(device);
+    }
+
     @Given("I enter the password")
     public void i_enter_the_password() throws Throwable {
         String password = PropertyUtility.getDataProperties("admin.password");
 
         if(System.getProperty("Parallel").equalsIgnoreCase("true")){
-            if(System.getProperty("password") != null){
+            if(System.getProperty("loginPassword") != null){
                 System.out.println("Inside Login Password");
-                password = System.getProperty("password");
+                password = System.getProperty("loginPassword");
             }
         }
 
@@ -92,6 +129,9 @@ public class LoginSteps extends DriverBase {
     @Given("I click on {string} button")
     public void i_enter_the_password(String button) throws Throwable {
         switch (button) {
+            case "Select-Partner-Dropdown":
+                actions.click(home.selectPartnerDropdown(false));
+                break;
             case "Detached Devices Tab":
                 actions.click(customerPage.detachedDeviceTab(false));
                 break;
@@ -110,6 +150,9 @@ public class LoginSteps extends DriverBase {
             case "Access Points tab":
                 actions.click(customerPage.accessPointsTab(false));
                 break;
+            case "All Devices":
+                actions.click(customerPage.accessPointsTab(false));
+                break;
             case "Customers":
                 actions.click(home.customers(false));
                 break;
@@ -118,8 +161,31 @@ public class LoginSteps extends DriverBase {
                 break;
             case "login":
                 actions.click(loginPage.signInButton(false));
+                if(actions.isElementPresent(loginPage.signInButton(true))){
+                    actions.click(loginPage.signInButton(false));
+                }
+                if (actions.isElementPresent(loginPage.allowNotificationsLogindevice(true))) {actions.click(loginPage.allowNotificationsLogindevice(false));}
                 break;
         }
+    }
+
+    @Given("I select the partner")
+    public void i_select_the_partner(){
+        String partnerName="";
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("partnerName") !=null){
+                partnerName = System.getProperty("partnerName");
+            }else{
+                partnerName = PropertyUtility.getDataProperties("partnerName");
+            }
+        }else{
+            partnerName = PropertyUtility.getDataProperties("partnerName");
+        }
+    }
+
+    @Given("I select the organisation")
+    public void i_select_the_organisation() throws Throwable {
+        generalUtility.selectOrganisation();
     }
 
     @Given("I should login to the Partner App")

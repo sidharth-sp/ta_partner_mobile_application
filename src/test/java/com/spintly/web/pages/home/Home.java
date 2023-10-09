@@ -11,4 +11,6 @@ public class Home extends PageBase {
     public WebElement hamburgerMenu(boolean ignoreException){ return findElement("//android.widget.TextView[@text='Dashboard']/preceding-sibling::android.view.ViewGroup/android.view.ViewGroup",LocatorType.XPath,ignoreException);}
 
     public WebElement customers(boolean ignoreException){ return findElement("//android.widget.TextView[@text='Customers']",LocatorType.XPath,ignoreException);}
+
+    public WebElement selectPartnerDropdown(boolean ignoreException){ return findElement("//android.widget.TextView[@resource-id=\"iconIcon\"]",LocatorType.XPath,ignoreException);}
 }

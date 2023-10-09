@@ -16,6 +16,8 @@ import com.spintly.web.pages.customers.CustomerPage;
 import com.spintly.web.pages.customers.CustomersListPage;
 import com.spintly.web.pages.home.Home;
 import com.spintly.web.pages.login.LoginPage;
+import com.spintly.web.pages.saams.HomePageSaams;
+import com.spintly.web.pages.saams.LoginPageSaams;
 import com.spintly.web.support.*;
 import cucumber.api.java.es.E;
 import io.appium.java_client.android.AndroidDriver;
@@ -69,6 +71,7 @@ import static java.util.stream.Collectors.toList;
 public class GeneralUtility extends DriverBase {
     WebDriverActions actions = new WebDriverActions();
     LoginPage loginPage = new LoginPage();
+    LoginPageSaams loginPageSaams = new LoginPageSaams();
 
     CustomerPage customerPage = new CustomerPage();
     CustomersListPage customersListPage = new CustomersListPage();
@@ -78,6 +81,7 @@ public class GeneralUtility extends DriverBase {
     ExcelHelper excelHelper = new ExcelHelper();
 
     Home home = new Home();
+    HomePageSaams homePageSaams =new HomePageSaams();
 
     public static String DEVICE = "";
 
@@ -122,6 +126,73 @@ public class GeneralUtility extends DriverBase {
         actions.backButtonPhone();
 
         actions.clickInit(loginPage.signInButton(false));
+    }
+
+    public void selectOrganisation() throws InterruptedException {
+        WebDriverActions action = new WebDriverActions();
+        System.out.println("Inside Select Organisations");
+        String currentOrg = null;
+
+        currentOrg = action.getText(homePageSaams.currentOrganisation(false));
+        boolean stop = false;
+        String org = "";
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("organisationName") != null){
+                org = System.getProperty("organisationName");
+            }
+        }
+
+        if (!(currentOrg.equalsIgnoreCase(org))) {
+            action.clickInit(homePageSaams.hamburgerMenu(false));
+            action.clickInit(homePageSaams.organisationsDropdown(false));
+            WebElement parent = homePageSaams.orgListScroll(false);
+            int count = 0;
+            while (!stop && count < 15) {
+                count++;
+                stop = action.scrollToElement(parent, action.isElementPresent(homePageSaams.organisationButton(org, true)));
+            }
+            action.clickInit(homePageSaams.organisationButton(org, false));
+        }
+    }
+
+    public void allowBLESaams(String device) {
+        WebDriverActions action = new WebDriverActions();
+        switch (device) {
+            case "device1":
+                action.clickInit(loginPageSaams.acceptBLE(false));
+                action.clickInit(loginPageSaams.whileUsingAppButton(false));
+                action.clickInit(loginPageSaams.acceptBLE(false));
+
+                action.backButtonPhone();
+                action.clickInit(loginPageSaams.closeCalibration(false));
+                break;
+            case "device2":
+                action.clickInit(loginPageSaams.acceptBLE(false));
+                action.clickInit(loginPageSaams.allowLocationDevice2(false));
+
+                action.clickInit(loginPageSaams.closeCalibration(false));
+                break;
+            case "device3":
+                action.clickInit(loginPageSaams.acceptBLE(false));
+                action.clickInit(loginPageSaams.allowLocationDevice3(false));
+//                action.backButtonPhone();
+                action.clickInit(loginPageSaams.allowLocationDevice3(false));
+
+                action.clickInit(loginPageSaams.closeCalibration(false));
+                break;
+            case "device4":
+                action.clickInit(loginPageSaams.acceptBLE(false));
+                action.clickInit(loginPageSaams.allowLocationDevice2(false));
+
+                action.clickInit(loginPageSaams.closeCalibration(false));
+                break;
+        }
+
+        boolean turnOnBluetooth = action.isElementPresent(homePageSaams.TurnOnBluetoothMessage(true));
+        if (turnOnBluetooth) {
+            action.click(homePageSaams.cancelTurnOnBluetooth(false));
+        }
     }
 
     public void goToCustomerPage() throws InterruptedException {

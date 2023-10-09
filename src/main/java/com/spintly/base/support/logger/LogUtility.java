@@ -6,6 +6,9 @@ import org.apache.log4j.Logger;
 
 public class LogUtility {
 
+    private Logger logger = Logger.getLogger(this.getClass());
+    private Object owner;
+
     public LogUtility(Object owner) {
         this.owner = owner;
         }
@@ -70,7 +73,6 @@ public class LogUtility {
         }
         return s;
     }
-    private Logger logger = Logger.getLogger(this.getClass());
-    private Object owner;
+
 
 }

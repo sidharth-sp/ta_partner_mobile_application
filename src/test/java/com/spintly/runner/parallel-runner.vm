@@ -37,8 +37,8 @@ public class $className extends AbstractTestNGCucumberTests {
     String lstallDevice;
 	Hooks hooks;
 
-	@Parameters({"test.Device","test.Platform","test.Environment","test.Category"})
-	public $className(@Optional("device1") String device, @Optional("android") String Platform, @Optional("QA") String environment, @Optional("sanity") String category){
+	@Parameters({"test.Device","test.Platform","test.Environment","test.Category","appName"})
+	public $className(@Optional("device1") String device, @Optional("android") String Platform, @Optional("QA") String environment, @Optional("sanity") String category, @Optional("partner") String appName){
 	    String ClassName =this.getClass().getSimpleName();
         lstallDevice=device;
         System.setProperty("ALL_DEVICES",lstallDevice);
@@ -47,8 +47,10 @@ public class $className extends AbstractTestNGCucumberTests {
         System.setProperty("Parallel", "true");
         System.setProperty("LOGIN_FILE",INITIAL_FILE_NAME);
         System.setProperty("runner.class", ClassName);
+        System.setProperty("appName", appName);
         PropertyUtility.environment=environment;
         PropertyUtility.targetPlatform=Platform;
+        PropertyUtility.appName=appName;
         this.hooks = new Hooks();
 	}
 

@@ -19,7 +19,7 @@ public class PropertyUtility {
     private static Properties resultConfig;
     private static Properties loginData;
 
-    public static  String targetPlatform="",environment="";
+    public static  String targetPlatform="",environment="",appName="";
 
     public static void loadProperties() {
         boolean checked = false;

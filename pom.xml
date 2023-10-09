@@ -40,11 +40,13 @@
             <artifactId>commons-email</artifactId>
             <version>1.5</version>
         </dependency>
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-core</artifactId>
             <version>${cucumber.version}</version>
         </dependency>
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-testng</artifactId>
@@ -63,6 +65,7 @@
             <artifactId>cucumber-java</artifactId>
             <version>${cucumber.version}</version>
         </dependency>
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
@@ -111,7 +114,6 @@
             <artifactId>json</artifactId>
             <version>20180130</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
@@ -215,9 +217,6 @@
             <artifactId>xmlbeans</artifactId>
             <version>3.0.2</version>
         </dependency>
-
-
-
     </dependencies>
 
     <build>

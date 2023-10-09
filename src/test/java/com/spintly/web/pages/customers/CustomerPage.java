@@ -39,4 +39,7 @@ public class CustomerPage extends PageBase {
 
     public WebElement resetNowButton(boolean ignoreException){ return findElement("//android.widget.TextView[@text='RESET NOW']",LocatorType.XPath,ignoreException);}
 
+    public WebElement resetButton(boolean ignoreException){ return findElement("//android.widget.TextView[@text='RESET']",LocatorType.XPath,ignoreException);}
+
+
 }

@@ -142,8 +142,8 @@ public class PartnerWebPortalService extends DriverContext {
         String networkId = PropertyUtility.getDataProperties("main.network.id");
 
         if(System.getProperty("Parallel").equalsIgnoreCase("true")){
-            if(System.getProperty("token") !=null){
-                token = System.getProperty("token");
+            if(System.getProperty("partnerToken") !=null){
+                token = System.getProperty("partnerToken");
             }else{
                 token = PropertyUtility.getDataProperties("token");
             }
@@ -151,14 +151,28 @@ public class PartnerWebPortalService extends DriverContext {
             token = PropertyUtility.getDataProperties("token");
         }
 
-        String jsonString = "{\"name\":\"AppAuto4\",\"installationMethod\":\"new_install\"," +
-                "\"configuration\":\"entry_rex\",\"siteId\":"+siteId+"," +
-                "\"networkId\":\""+networkId+"\"," +
-                "\"devices\":[{\"serialNumber\":\""+serialNumber+"\",\"deviceType\":\"entry\"}]," +
-                "\"lockingMechanism\":\"em_or_mag_lock\"," +
-                "\"relaySettings\":{\"relayOnTime\":6,\"invertRelayLogic\":false}}";
+        String jsonString = "[\n" +
+                "\t{\n" +
+                "\t\t\"name\": \"AppAuto2\",\n" +
+                "\t\t\"installationMethod\": 1,\n" +
+                "\t\t\"configuration\": 2,\n" +
+                "\t\t\"siteId\": "+siteId+",\n" +
+                "\t\t\"networkId\": "+networkId+",\n" +
+                "\t\t\"devices\": [\n" +
+                "\t\t\t{\n" +
+                "\t\t\t\t\"serialNumber\": \""+serialNumber+"\",\n" +
+                "\t\t\t\t\"deviceType\": 1\n" +
+                "\t\t\t}\n" +
+                "\t\t],\n" +
+                "\t\t\"lockingMechanism\": 1,\n" +
+                "\t\t\"relaySettings\": {\n" +
+                "\t\t\t\"relayOnTime\": 6,\n" +
+                "\t\t\t\"invertRelayLogic\": false\n" +
+                "\t\t}\n" +
+                "\t}\n" +
+                "]";
 
-        String path = PropertyUtility.getDataProperties("base.api.url")+"/infrastructureManagement/v6/partners/"+partnerId+"/organisations/"+orgId+"/accessPoints";
+        String path = PropertyUtility.getDataProperties("base.api.url")+"/infrastructureManagement/v1/networks/"+networkId+"/accessPoints";
 
         Response response = ApiHelper.givenRequestSpecification()
                 .header("authorization", token)
@@ -168,9 +182,9 @@ public class PartnerWebPortalService extends DriverContext {
 
         JsonPath jsonPathEvaluator = response.jsonPath();
 
-        String accessPointId = jsonPathEvaluator.get("message.accessPointId").toString();
+//        String accessPointId = jsonPathEvaluator.get("message.accessPointId").toString();
 
-        variableContext.setScenarioContext("NEWACCESSPOINTID",accessPointId);
+//        variableContext.setScenarioContext("NEWACCESSPOINTID",accessPointId);
 
         ApiHelper.genericResponseValidation(response,"ADDED DEVICE : "+serialNumber);
     }
@@ -214,6 +228,27 @@ public class PartnerWebPortalService extends DriverContext {
         List<String> devices = jsonPathEvaluator.get("message.devices.serialNumber");
 
         return devices;
+    }
+
+    public void showResetDevice(String serialNumber){
+        String path = "https://34r9rg86s2.execute-api.ap-south-1.amazonaws.com"+"/test2/developerSupport/v1/infrastructureManagement/toggleReset";
+        String token = PropertyUtility.getDataProperties("internal.token");
+
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("internalToken") != null){
+                token = System.getProperty("internalToken");
+            }
+        }
+
+        String jsonString = "{\"resourceName\":\"devices\",\"resourceId\":\""+serialNumber+"\"}";
+        Response response = ApiHelper.givenRequestSpecification()
+                .header("authorization", token)
+                .body(jsonString)
+                .when().redirects().follow(false).
+                post(path);
+
+        ApiHelper.genericResponseValidation(response,"SHOW RESET BUTTON FOR SERIAL NUMBER : "+serialNumber);
     }
 
 }

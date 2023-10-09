@@ -340,4 +340,91 @@ public class AccessManagementService extends DriverContext {
         return response;
     }
 
+    public String accessPointId(String accessPointName,String orgId){
+
+        String token = PropertyUtility.getDataProperties("saams.token");
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("saamsToken") != null){
+                token = System.getProperty("saamsToken");
+            }
+        }
+
+        String accessPointID="";
+
+        String jsonString = "{\"filters\":{\"sites\":[]},\"pagination\":{\"perPage\":25,\"page\":1}}";
+
+        Response response = ApiHelper.givenRequestSpecification()
+                .header("authorization", token)
+                .body(jsonString)
+                .when().redirects().follow(false).
+                post(PropertyUtility.getDataProperties("base.saams.api.url")+"/organisationManagement/v3/organisations/"+orgId+"/accessPoints");
+
+//        System.out.println(response.asString());
+
+        ApiHelper.genericResponseValidation(response, "FETCH ACCESS POINT ID");
+
+        JsonPath jsonPathEvaluator = response.jsonPath();
+
+        int size = jsonPathEvaluator.getList("message.accessPoints").size();
+
+        for(int i=0;i<size;i++){
+            String name = jsonPathEvaluator.getString("message.accessPoints["+i+"].name").toString();
+            if(name.equalsIgnoreCase(accessPointName)){
+                accessPointID =  jsonPathEvaluator.get("message.accessPoints["+i+"].id").toString();
+            }
+        }
+
+        return accessPointID;
+    }
+
+    public void assignPermission(String accessPointName,String userPhone,String orgId) throws ParseException {
+        String token = PropertyUtility.getDataProperties("saams.token");
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("saamsToken") != null){
+                token = System.getProperty("saamsToken");
+            }
+        }
+
+        String accessPointId = accessPointId(accessPointName,orgId);
+        String userID = getUserID(userPhone,orgId);
+
+        String jsonString ="{\"permissionsToAdd\":["+userID+"],\"permissionsToRemove\":[],\"pendingPermissionsToRemove\":[]}";
+
+        Response response = ApiHelper.givenRequestSpecification()
+                .header("authorization", token)
+                .body(jsonString)
+                .when().redirects().follow(false).
+                patch(PropertyUtility.getDataProperties("base.saams.api.url")+"/organisationManagement/v4/organisations/"+orgId+"/accessPoint/"+accessPointId+"/users/permissions");
+
+//        System.out.println(response.asString());
+
+        ApiHelper.genericResponseValidation(response, "API - ASSIGN PERMISSION ");
+    }
+
+
+    public String getUserID(String phone,String orgId) throws ParseException {
+        String jsonString = "{\"pagination\":{\"page\":1,\"perPage\":25},\"filters\":{\"userType\":[\"active\"],\"terms\":[],\"sites\":[],\"phone\":\""+phone+"\",\"isSignedUp\":null,\"s\":{\"phone\":\""+phone+"\"}}}";
+        String token = PropertyUtility.getDataProperties("saams.token");
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("saamsToken") != null){
+                token = System.getProperty("saamsToken");
+            }
+        }
+
+        Response response = ApiHelper.givenRequestSpecification()
+                .header("authorization", token)
+                .body(jsonString)
+                .when().redirects().follow(false).
+                post(PropertyUtility.getDataProperties("base.saams.api.url") + "/organisationManagement/v3/organisations/"+orgId+"/users/list");
+
+//        System.out.println("RESPONSEEEE "+response.asString());
+
+        ApiHelper.genericResponseValidation(response, "API - GET USER ID of phone " + phone);
+        JsonPath jsonPathEvaluator = response.jsonPath();
+        return jsonPathEvaluator.get("message.users.id").toString().replace("[", "").replace("]", "");
+    }
+
 }

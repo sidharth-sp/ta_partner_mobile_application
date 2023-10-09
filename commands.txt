@@ -3,22 +3,36 @@ C:/Work/apache-maven-3.8.3/bin/mvn package -e -Dcucumber.options="--glue com.spi
 
 
 //Start App Command
-install exec:java -e -Dtest.Environment="test" -Dstarting="true" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @startApp"
+appName - saams   => Saams App
+appName - partner => partner App
+install exec:java -e -DappName="partner" -Dtest.Environment="test2" -Dstarting="true" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @startApp"
 
-//Login Command
-install exec:java -e -Dtest.Environment="test" -DloginUsername="7722082259" -DloginPassword="sidharth123" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @Login-partner"
+//Login Command - Partner
+install exec:java -e -Dtest.Environment="test2" -DloginUsername="7722082259" -DloginPassword="sidharth123" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @loginPartner"
 
-//Reset Device Command
-install exec:java -e -Dtest.Environment="test" -DpartnerName="Mrinq Technologies" -DorganisationName="AppAutomation" -DaccessPointName="AppAuto4" -DserialNumber="1001A025000026" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @resetDevice"
+//Login Command - Saams
+install exec:java -e -Dtest.Environment="test2" -DusernameSaams="7722082259" -DpasswordSaams="12345678" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @loginSaams"
+
+//Select Organisation Saams
+install exec:java -e -Dtest.Environment="test2" -DorganisationName="AppAutomationTest2" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @selectOrganisationSaams"
+
+//AssignAccessPoint
+install exec:java -e -Dtest.Environment="test2" -DorganisationId="AppAutomationTest2" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @assignAccessPoint"
+
+//ClickToAccessSaams
+install exec:java -e -Dtest.Environment="test2" -DaccessPointName="AppAuto2" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @clickToAccess"
+
 
 //Configure Device Command
-install exec:java -e -Dtest.Environment="test" -DpartnerName="Mrinq Technologies" -DorganisationName="AppAutomation" -DaccessPointName="AppAuto4" -DserialNumber="1001A025000026" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @configureDevice"
+install exec:java -e -Dtest.Environment="test2" -DpartnerName="Mrinq Technologies" -DorganisationName="AppAutomation" -DaccessPointName="AppAuto4" -DserialNumber="1001A025000026" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @configureDevice"
+
+//Reset Device Command
+install exec:java -e -Dtest.Environment="test2" -DpartnerName="Mrinq Technologies" -DorganisationName="AppAutomation" -DaccessPointName="AppAuto4" -DserialNumber="1001A025000026" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @resetDevice"
 
 //ReturnToHomePage
-install exec:java -e -Dtest.Environment="test" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @returnToHomePage"
+install exec:java -e -Dtest.Environment="test2" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @returnToHomePage"
 
 //Stop App Command
-install exec:java -e -Dtest.Environment="test" -Dstopping="true" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @stopApp"
+install exec:java -e -Dtest.Environment="test2" -Dstopping="true" -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @stopApp"
 
-
-package -e -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @stopApp"
+package -e -Dcucumber.options="--glue com.spintly.web.stepdefinitions --glue com.spintly.api --glue com.spintly.runner --tags @loginPartner"

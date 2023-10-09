@@ -66,9 +66,6 @@ public class SuiteSetup extends EventFiringWebDriver {
             }
         }
         if (driver != null) {
-//            driver.manage().timeouts().setScriptTimeout(15, TimeUnit.SECONDS);
-//            driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
-
             driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
             DriverContext.getObject().setPrimaryInstanceKey("ORIGINAL");
             DriverContext.getObject().storeDriverInstance("ORIGINAL", driver);
@@ -119,9 +116,18 @@ public class SuiteSetup extends EventFiringWebDriver {
     private static DesiredCapabilities getAndroidDesiredCapabilities() {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
-        String appURL = FileUtility.getSuiteResource("", "src/main/resources/APK/" + PropertyUtility.getDataProperties("app.version") + "/testApp.apk");
-        String appPackage = PropertyUtility.getDataProperties("app.package");
-        String activity = "com.spintlypartnermobile.SplashActivity";
+        String appName = "partner";
+        String env = PropertyUtility.getProperty("environment");
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("appName") != null){
+                appName = System.getProperty("appName");
+            }
+        }
+
+        String appURL = FileUtility.getSuiteResource("", "src/main/resources/APK/"+appName+"/"+env+"/testApp.apk");
+        String appPackage = setAppPackage(appName,env);
+        String activity = setAppActivity(appName);
 
         String UDID = "1603201121002MR";
         System.out.println("UDID Used is : " + UDID);
@@ -130,10 +136,8 @@ public class SuiteSetup extends EventFiringWebDriver {
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
         desiredCapabilities.setCapability(MobileCapabilityType.UDID, UDID);
 
-
         if(System.getProperty("Parallel").equalsIgnoreCase("true")){
             if(System.getProperty("starting") != null || System.getProperty("stopping") != null){
-                System.out.println("Set Extra Capabilities");
                 desiredCapabilities.setCapability("appPackage", appPackage);
                 desiredCapabilities.setCapability(MobileCapabilityType.APP,appURL);
                 desiredCapabilities.setCapability("appActivity", activity);
@@ -142,9 +146,7 @@ public class SuiteSetup extends EventFiringWebDriver {
             }
         }
 
-
         desiredCapabilities.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 300);
-
         return desiredCapabilities;
     }
 
@@ -152,7 +154,6 @@ public class SuiteSetup extends EventFiringWebDriver {
         AppiumServiceBuilder builder = new AppiumServiceBuilder();
         builder.withIPAddress("127.0.0.1")
                 .usingPort(4723)
-//                .withAppiumJS (new File ("C:\\Users\\sidha\\AppData\\Roaming\\npm\\node_modules\\appium\\lib\\main.js"))
                 .usingDriverExecutable(new File("C:\\Program Files\\nodejs\\node.exe"))
                 .withArgument(BASEPATH, "/wd/hub")
                 .withArgument(GeneralServerFlag.SESSION_OVERRIDE);
@@ -177,8 +178,6 @@ public class SuiteSetup extends EventFiringWebDriver {
 
     public void createNewAndroidDriverInstance(String key, String browser) throws MalformedURLException {
         AppiumDriver newAndroidDriverInstance = createAndroidDriverInstance();
-//        newWebDriverInstance.manage().timeouts().implicitlyWait(Integer.parseInt(PropertyUtility.getProperty("implicit.wait")), TimeUnit.SECONDS);
-//        newWebDriverInstance.manage().window().maximize();
         DriverContext.getObject().storeDriverInstance(key, newAndroidDriverInstance);
     }
 
@@ -189,4 +188,44 @@ public class SuiteSetup extends EventFiringWebDriver {
         }
         super.close();
     }
+
+    public static String setAppPackage(String appName,String env){
+        if(appName.equalsIgnoreCase("saams")){
+            switch (env){
+                case "test":
+                    PropertyUtility.setLoginData("app.package","com.mrinq.smartaccess.test");
+                    break;
+                case "test1":
+                    PropertyUtility.setLoginData("app.package","com.mrinq.smartaccess.test1");
+                    break;
+                case "test2":
+                    PropertyUtility.setLoginData("app.package","com.mrinq.smartaccess.test2");
+                    break;
+            }
+        } else if (appName.equalsIgnoreCase("partner")) {
+            switch (env){
+                case "test1":
+                    PropertyUtility.setLoginData("app.package","com.spintly.partner.test1");
+                    break;
+                case "test2":
+                    PropertyUtility.setLoginData("app.package","com.spintly.partner.test2");
+                    break;
+            }
+        }
+        return PropertyUtility.getDataProperties("app.package");
+    }
+
+    public static String setAppActivity(String appName){
+        String activity = "";
+        switch (appName){
+            case "saams":
+                activity = "com.spintly.smartaccess.Activities.Splash";
+                break;
+            case "partner":
+                activity = "com.spintlypartnermobile.SplashActivity";
+                break;
+        }
+        return activity;
+    }
+
 }

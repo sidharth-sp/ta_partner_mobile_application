@@ -113,97 +113,17 @@ public class CustomersSteps extends DriverContext {
         }
     }
 
-    @When("I set the environment for deleting and resetting the device")
-    public void i_set_the_environment_for_deleting_and_resetting_the_device() {
+    @When("I call the show reset button API")
+    public void i_call_the_show_reset_button_api() {
         String serialNumber = PropertyUtility.getDataProperties("main.device.serial.no");
-        boolean deviceExists = false;
-        String deviceName = "AppAuto3";
-        deviceExists = partnerWebPortalService.namesOfAccessPointsInOrg().contains(deviceName);
-        boolean configureDevice = false;
 
-        if (deviceExists) {
-            System.out.println("DEVICE EXISTS");
-            String deviceStatus = partnerWebPortalService.getStateOfDevice(deviceName);
-
-            switch (deviceStatus) {
-                case "in_sync":
-                    System.out.println("DEVICE IS IN_SYNC STATE");
-                    //Do Nothing
-                    break;
-                case "configure_pending":
-                    System.out.println("DEVICE WAS IN CONFIGURE PENDING STATE");
-                    configureDevice = true;
-                    actions.click(home.hamburgerMenu(false));
-                    actions.click(home.customers(false));
-                    String customerName = PropertyUtility.getDataProperties("organization.title");
-                    actions.click(customersListPage.customerSearchBar(false));
-                    actions.sendKeys(customersListPage.customerSearchBar(false), customerName);
-                    actions.backButtonPhone();
-                    actions.click(customersListPage.customerLink(customerName, false));
-                    actions.click(customersListPage.customerLink(customerName, false));
-                    break;
-            }
-        } else {
-            System.out.println("DEVICE DOES NOT EXIST");
-            configureDevice = true;
-            boolean deviceIsDetached = partnerWebPortalService.getDetachedDevices().contains(serialNumber);
-            actions.click(home.hamburgerMenu(false));
-            actions.click(home.customers(false));
-            String customerName = PropertyUtility.getDataProperties("organization.title");
-            actions.click(customersListPage.customerSearchBar(false));
-            actions.sendKeys(customersListPage.customerSearchBar(false), customerName);
-            actions.backButtonPhone();
-            actions.click(customersListPage.customerLink(customerName, false));
-            actions.click(customersListPage.customerLink(customerName, false));
-
-            if (deviceIsDetached) {
-                System.out.println("DEVICE HAS TO BE RESET");
-                actions.click(customerPage.detachedDeviceTab(false));
-                actions.sendKeys(customerPage.detachedDeviceSearch(false), serialNumber);
-                actions.click(customerPage.factoryResetButton(false));
-                actions.click(customerPage.resetNowButton(false));
-                if (actions.isElementPresent(loginPage.allowNotificationsLogindevice(true))) {
-                    actions.click(loginPage.allowNotificationsLogindevice(false));
-                }
-                LocalDateTime now = LocalDateTime.now();
-                while (actions.isElementPresent(customerPage.resettingDeviceMessage(true))) {
-                    LocalDateTime now2 = LocalDateTime.now();
-                    if (now2.equals(now.plusMinutes(1))) {
-                        break;
-                    }
-                }
-                actions.backButtonPhone();
-                actions.backButtonPhone();
-            }
-            partnerWebPortalService.addAccessPoint(serialNumber);
-        }
-
-        if (configureDevice) {
-            System.out.println("DEVICE WAS IN CONFIGURE PENDING STATE");
-            actions.click(customerPage.accessPointsTab(false));
-            actions.sendKeys(customerPage.detachedDeviceSearch(false), deviceName);
-            actions.click(customerPage.accessPointName(deviceName, false));
-            actions.click(customerPage.configureButton(false));
-            if (actions.isElementPresent(loginPage.allowNotificationsLogindevice(true))) {
-                actions.click(loginPage.allowNotificationsLogindevice(false));
-            }
-            LocalDateTime now = LocalDateTime.now();
-            while (actions.isElementPresent(customerPage.configuringDeviceMessage(true))) {
-                LocalDateTime now2 = LocalDateTime.now();
-                if (now2.equals(now.plusMinutes(1))) {
-                    break;
-                }
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("serialNumber") != null){
+                serialNumber = System.getProperty("serialNumber");
             }
         }
 
-        int count = 0;
-        while (!(actions.isElementPresent(home.DashboardLabel(true)))) {
-            actions.backButtonPhone();
-            count++;
-            if (count > 10) {
-                break;
-            }
-        }
+        partnerWebPortalService.showResetDevice(serialNumber);
     }
 
 
@@ -225,7 +145,7 @@ public class CustomersSteps extends DriverContext {
     @When("I scroll and select the access point to be configured")
     public void i_scroll_and_select_the_access_point_to_be_configured() {
         boolean stop = false;
-        String accessPointName = "AppAuto3";
+        String accessPointName = "AppAuto2";
 
         if(System.getProperty("Parallel").equalsIgnoreCase("true")){
             if(System.getProperty("accessPointName") != null){
@@ -237,11 +157,60 @@ public class CustomersSteps extends DriverContext {
         actions.click(customerPage.accessPointName(accessPointName, false));
     }
 
+    @When("I scroll and select the access point to be reset")
+    public void i_scroll_and_select_the_access_point_to_be_reset() {
+        boolean stop = false;
+        String accessPointName = "AppAuto2";
+
+        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+            if(System.getProperty("accessPointName") != null){
+                accessPointName = System.getProperty("accessPointName");
+            }
+        }
+
+        actions.sendKeys(customerPage.detachedDeviceSearch(false), accessPointName);
+        actions.click(customerPage.accessPointName(accessPointName, false));
+    }
+
+    @Given("I click on the reset device button")
+    public void i_click_on_the_reset_device_button() throws InterruptedException{
+        variableContext.setScenarioContext("ADDDELETEDDEVICE", "TRUE");
+//        String serialNumber = PropertyUtility.getDataProperties("main.device.serial.no");
+//
+//        if(System.getProperty("Parallel").equalsIgnoreCase("true")){
+//            if(System.getProperty("serialNumber") != null){
+//                serialNumber = System.getProperty("serialNumber");
+//            }
+//        }
+
+        actions.click(customerPage.resetButton(false));
+        if(actions.isElementPresent(loginPage.allowNotificationsLogindevice(true))){actions.click(loginPage.allowNotificationsLogindevice(false));}
+
+
+//        actions.sendKeys(customerPage.detachedDeviceSearch(false), serialNumber);
+//        actions.click(customerPage.factoryResetButton(false));
+//        actions.click(customerPage.resetNowButton(false));
+//        if (actions.isElementPresent(loginPage.allowNotificationsLogindevice(true))) {
+//            actions.clickInit(loginPage.allowNotificationsLogindevice(false));
+//        }
+        LocalDateTime now = LocalDateTime.now();
+        while (actions.isElementPresent(customerPage.resettingDeviceMessage(true))) {
+            LocalDateTime now2 = LocalDateTime.now();
+            if (now2.equals(now.plusMinutes(1))) {
+                break;
+            }
+        }
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+        }
+    }
+
     @When("I search the access point to be deleted and delete it")
     public void i_search_the_access_point_to_be_deleted() throws InterruptedException {
         variableContext.setScenarioContext("DELETENEWDEVICE", "FALSE");
         boolean stop = false;
-        String accessPointName = "AppAuto3";
+        String accessPointName = "AppAuto2";
 
         if(System.getProperty("Parallel").equalsIgnoreCase("true")){
             if(System.getProperty("accessPointName") != null){
